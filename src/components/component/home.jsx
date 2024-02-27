@@ -1,6 +1,7 @@
 'use client'
-import { Button } from "@/components/ui/button"
-import { TooltipTrigger, TooltipContent, Tooltip, TooltipProvider } from "@/components/ui/tooltip"
+import Image from "next/image";
+import { Button } from "../ui/button"
+import { TooltipTrigger, TooltipContent, Tooltip, TooltipProvider } from "../ui/tooltip"
 import { motion } from 'framer-motion';
 import { useEffect } from "react";
 export function Main() {
@@ -23,7 +24,8 @@ export function Main() {
             duration: 1,
           }}>
           <h2 className="mb-2 text-lg font-semibold text-white">Home</h2>
-          <div className="h-[200px] bg-white/10 backdrop-blur-md rounded-lg" />
+          
+          <Image alt="home" height={200} src="/logo.jpg" width={200} className="h-[200px] w-full"/>
         </motion.div>
         <motion.div
           animate={{
@@ -39,7 +41,7 @@ export function Main() {
             duration: 1,
           }}>
           <h2 className="mb-2 text-lg font-semibold text-white">Home</h2>
-          <div className="h-[200px] bg-white/10 backdrop-blur-md rounded-lg" />
+          <Image alt="home" height={200} src="/logo.jpg" width={200} className="h-[200px] w-full"/>
         </motion.div>
         <motion.div
           animate={{
@@ -55,7 +57,7 @@ export function Main() {
             duration: 1,
           }}>
           <h2 className="mb-2 text-lg font-semibold text-white">Home</h2>
-          <div className="h-[200px] bg-white/10 backdrop-blur-md rounded-lg" />
+          <Image alt="home" height={200} src="/logo.jpg" width={200} className="h-[200px] w-full"/>
         </motion.div>
         <motion.div
           animate={{
@@ -71,7 +73,7 @@ export function Main() {
             duration: 1,
           }}>
           <h2 className="mb-2 text-lg font-semibold text-white">Home</h2>
-          <div className="h-[200px] bg-white/10 backdrop-blur-md rounded-lg" />
+          <Image alt="home" height={200} src="/logo.jpg" width={200} className="h-[200px] w-full"/>
         </motion.div>
       </div>
     </div>)

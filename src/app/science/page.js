@@ -1,5 +1,5 @@
-import Science from '@/components/component/science'
 import React from 'react'
+import Science from '../../components/component/Science'
 
 function page() {
   return (

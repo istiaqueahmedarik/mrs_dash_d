@@ -8,7 +8,7 @@ import 'cropperjs/dist/cropper.css'
 import ExperimentChart from './ExperimentChart'
 import GridOption from './gridOption'
 import { io } from 'socket.io-client'
-const socket = io('http://10.104.128.100:3002')
+const socket = io('http://192.168.126.248:3002')
 
 function Life() {
   const webcamRef = useRef(null)
@@ -45,6 +45,7 @@ const handleButtonClick = () => {
   if(selectedOption==='Iodin'){
     setIodin([...Iodin, cropData]);
   }
+  handleClose();
 };
 
   const [image, setImage] = useState(
@@ -135,7 +136,7 @@ const handleButtonClick = () => {
 
   React.useEffect(()=>{
     socket.on('image', (message) => {
-      if(message['camera']===cur){
+      if(message['camera']==='microscope'){
           setImgSrc('data:image/jpeg;base64,'+message['image'])}
     })
       
@@ -152,7 +153,7 @@ const handleButtonClick = () => {
           className={`h-3 w-3 rounded-full transition-all ${isLive ? 'bg-red-500' : 'bg-gray-500'}`}
         />
       </div>
-      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-[16rem] h-[16rem]' width={400} height={400}/>:null}
+      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-full h-full' width={600} height={600}/>:null}
         <div className="flex flex-row justify-around mt-5 mb-5">
           <button
             className="bg-blue-400 pt-3 pb-3 pl-5 pr-5 rounded-full hover:bg-white hover:text-black transition-all"
@@ -160,12 +161,12 @@ const handleButtonClick = () => {
           >
             Save
           </button>
-          <button
+          {/* <button
             className="bg-blue-400 pt-3 pb-3 pl-5 pr-5 rounded-full hover:bg-white hover:text-black transition-all"
             onClick={()=>switchCamera()}
           >
             Switch Camera
-          </button>
+          </button> */}
         </div>
       </div>
       <Modal
@@ -183,6 +184,7 @@ const handleButtonClick = () => {
             {/* {imgSrc && <Image alt="pic" height={300} width={300} src={imgSrc} />} */}
 
             <div style={{ width: '100%' }}>
+            
               <Cropper
                 ref={cropperRef}
                 style={{ height: 400, width: '100%' }}
@@ -235,7 +237,7 @@ const handleButtonClick = () => {
                 )}
               </div>
             </div>
-            <div className="w-64 m-auto mt-2">
+            <div className="w-64 m-auto mt-20 mb-20">
   <label className="block uppercase tracking-wide text-white text-xs font-bold mb-2" htmlFor="grid-state">
     Choose An Experiment Type
   </label>

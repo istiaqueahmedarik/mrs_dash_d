@@ -8,7 +8,7 @@ import 'cropperjs/dist/cropper.css'
 import ExperimentChart from './ExperimentChart'
 import GridOption from './gridOption'
 import { io } from 'socket.io-client'
-const socket = io('http://10.104.128.100:3002')
+const socket = io('http://192.168.1.126:3002')
 function Cam({type,data,setData}) {
   const webcamRef = useRef(null)
   const [imgSrc, setImgSrc] = useState(null)
@@ -34,6 +34,7 @@ const handleSelectChange = (event) => {
 const handleButtonClick = () => {
   console.log(cropData);
     setData([...data, cropData]);
+  handleClose();
   
 };
 
@@ -93,18 +94,13 @@ const handleButtonClick = () => {
     }
   }
 
-  const [isLive, setIsLive] = useState(false);
+  const [isLive, setIsLive] = useState(true);
 
-useEffect(() => {
-  const interval = setInterval(() => {
-    setIsLive(prevIsLive => !prevIsLive);
-  }, 500); 
 
-  return () => clearInterval(interval);
-}, []);
 
 React.useEffect(()=>{
     socket.on('image', (message) => {
+      // console.log(message)
       if(message['camera']===type)
       setImgSrc('data:image/jpeg;base64,'+message['image'])
     })
@@ -120,20 +116,25 @@ React.useEffect(()=>{
           className={`h-3 w-3 rounded-full transition-all ${isLive ? 'bg-red-500' : 'bg-gray-500'}`}
         />
       </div>
-      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-[16rem] h-[16rem]' width={400} height={400}/>:null}
+      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-full h-full' width={200} height={200}/>:null}
         <div className="flex flex-row justify-around mt-5 mb-5">
+          
+        
+  
+       
+      
           <button
-            className="bg-blue-400 pt-3 pb-3 pl-5 pr-5 rounded-full hover:bg-white hover:text-black transition-all"
+            className="inline-flex h-12 animate-shimmer items-center justify-center rounded-full border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
             onClick={capture}
           >
             Save
           </button>
-          <button
+          {/* <button
             className="bg-blue-400 pt-3 pb-3 pl-5 pr-5 rounded-full hover:bg-white hover:text-black transition-all"
             onClick={switchCamera}
           >
             Switch Camera
-          </button>
+          </button> */}
         </div>
       </div>
       <Modal

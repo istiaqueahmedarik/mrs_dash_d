@@ -1,9 +1,9 @@
-import Basic from '@/components/component/basic_sensor'
 import React from 'react'
+import Basic from '../../../components/component/basic_sensor'
 
 function Page() {
   return (
-    <div className='h-screen w-screen'><Basic/></div>
+    <div className='h-screen w-screen ml-[5rem]'><Basic/></div>
   )
 }
 

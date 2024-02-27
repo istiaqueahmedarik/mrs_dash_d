@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React, { useEffect } from 'react'
 
-function ImageList({b,setB,setData,resetData,sample,setGrid,grid,Nh3,fn,setfN,it,setiT,val,setVal,pb,set,data1,data2,data3}) {
+function ImageList({protein,benedict,iodin, b,setB,setData,resetData,sample,setGrid,grid,Nh3,fn,setfN,it,setiT,val,setVal,pb,set,data1,data2,data3}) {
   const getColor = (val) => {
     if (val <= 0.5) return 'blue-500';
     if (val <= 1) return 'grern-500';
@@ -70,10 +70,14 @@ function ImageList({b,setB,setData,resetData,sample,setGrid,grid,Nh3,fn,setfN,it
   
 
   return (
-    <div className='grid  w-full grid-rows-4 gap-5 m-2'>
+    <div className='grid  w-full grid-rows-4 gap-3 m-2'>
+      <div className='grid grid-rows-2 w-full place-content-center m-auto bg-slate-900 p-5 pt-[5rem] pb-[5rem] rounded-xl'>
+          {fn===-1?<h1 className='text-center text-4xl'> Ammonia Level: {Nh3}</h1>:null}
+          {fn===-1?<button className={`bg-green-600 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2 text-2xl`} onClick={(e)=>toggleFn(Nh3)}>Set This Data For This Sample</button>:<h1>Ammonia: {fn}</h1>}
+        </div>
         <div className='grid grid-cols-2 gap-2 w-full bg-[#222222] p-1 mb-2 rounded-xl'>
-        {data1===-1?<div className=' text-white text-center m-5'>No Data on Protein Yet</div>:<Image src={data1} alt={"image"}  className='rounded-lg w-[16rem] h-[16rem]' width={400} height={400}/>}
-        {data1===-1?<div className=' text-white text-center m-5'>No Data on Protein Yet</div>:
+        {protein.length<=sample-1?<div className=' text-white text-center m-5'>No Data on Protein Yet</div>:<Image src={protein[sample-1]} alt={"image"}  className='rounded-lg w-full m-auto' width={400} height={400}/>}
+        {protein.length<=sample-1?<div className=' text-white text-center m-5'>No Data on Protein Yet</div>:
         <div className=''>
           <h1 className='text-4xl mb-2 text-slate-400'>Protein Test: </h1>
           <h1>Select The Color:</h1>
@@ -88,8 +92,8 @@ function ImageList({b,setB,setData,resetData,sample,setGrid,grid,Nh3,fn,setfN,it
         </div>
 
         <div className='grid grid-cols-2 gap-2 w-full bg-[#222222] p-1 mb-2 rounded-xl'>
-        {data2===-1?<div className=' text-white text-center m-5'>No Sample For Benedict Test Yet</div>:<Image src={data2} alt={"image"}  className='rounded-lg w-full' width={400} height={400}/>}
-        {data2===-1?<div className=' text-white text-center m-5'>No Data on Benedict Test data Yet</div>:
+        {benedict.length<=sample-1?<div className=' text-white text-center m-5'>No Sample For Benedict Test Yet</div>:<Image src={benedict[sample-1]} alt={"image"}  className='rounded-lg w-full m-auto' width={400} height={400}/>}
+        {benedict.length<=sample-1?<div className=' text-white text-center m-5'>No Data on Benedict Test data Yet</div>:
          <div className=''>
          <h1 className='text-4xl mb-2 text-slate-400'>Benedict Test: </h1>
 
@@ -113,8 +117,8 @@ function ImageList({b,setB,setData,resetData,sample,setGrid,grid,Nh3,fn,setfN,it
         </div>
 
         <div className='grid grid-cols-2 gap-2 w-full bg-[#222222] p-1 mb-2 rounded-xl'>
-        {data3===-1?<div className=' text-white text-center m-5'>No Data on Iodin Test Yet</div>:<Image src={data3} alt={"image"}  className='rounded-lg w-full' width={400} height={400}/>}
-        {data3===-1?<div className=' text-white text-center m-5'>No Data on Iodin Test Yet</div>
+        {iodin.length<=sample-1?<div className=' text-white text-center m-5'>No Data on Iodin Test Yet</div>:<Image src={iodin[sample-1]} alt={"image"}  className='rounded-lg w-full m-auto' width={400} height={400}/>}
+        {iodin.length<=sample-1?<div className=' text-white text-center m-5'>No Data on Iodin Test Yet</div>
         :
         <div className=''>
           <h1 className='text-4xl mb-2 text-slate-400'>Iodin Test: </h1>
@@ -126,15 +130,12 @@ function ImageList({b,setB,setData,resetData,sample,setGrid,grid,Nh3,fn,setfN,it
           <button className={`${it===3?"bg-green-600":"bg-[#35393C]"} pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2`} onClick={()=>togglingiT(3)}>Starch</button>
           
         </div>
-        {pb!==0?pb===1?<h1 className='text-white'>Result: Absent</h1>:<h1 className='text-white'>Result: Present</h1>:null}
+        {it!==0?it===1?<h1 className='text-white'>Result: Absent</h1>:<h1 className='text-white'>Result: Present</h1>:null}
         </div>  
       }
         </div>
 
-        <div className='grid grid-rows-2 w-full place-content-center m-auto bg-slate-900 p-5 rounded-xl'>
-          {fn===-1?<h1 className='text-center'>Current Ammonia: {Nh3}</h1>:null}
-          {fn===-1?<button className={`bg-green-600 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2`} onClick={(e)=>toggleFn(Nh3)}>Set This Data For This Sample</button>:<h1>Ammonia: {fn}</h1>}
-        </div>
+        
     </div>
   )
 }

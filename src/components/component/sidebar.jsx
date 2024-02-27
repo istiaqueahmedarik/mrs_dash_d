@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link'
 function Sidebar() {
   return (
-    <div  style={{gridArea: 'sidebar'}} className=' p-10'>
+    <div  style={{gridArea: 'sidebar'}} className='z-10 fixed p-3'>
          <motion.div
         animate={{
           opacity: 1,
@@ -24,7 +24,7 @@ function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link href={"/"}  className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-2' >
+              <Link href={"/"}  className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-6' >
                 <HomeIcon className="hover:text-white  text-[#B9ABA7] " />
               </Link>
             </TooltipTrigger>
@@ -35,7 +35,7 @@ function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link href="/science"  className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-2' >
+              <Link href="/science"  className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-6' >
                 <AtomIcon className="hover:text-white text-[#B9ABA7] " />
               </Link>
             </TooltipTrigger>
@@ -46,7 +46,8 @@ function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link href="/"  className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-2' >
+              <Link href="/electrical"  className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-6
+              ' >
                 <ZapIcon className="hover:text-white text-[#B9ABA7] " />
               </Link>
             </TooltipTrigger>
@@ -56,7 +57,7 @@ function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-2' href="/">
+              <Link className='hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-6' href="/autonomus">
                 <BotIcon className="hover:text-white text-[#B9ABA7]  " />
               </Link>
             </TooltipTrigger>

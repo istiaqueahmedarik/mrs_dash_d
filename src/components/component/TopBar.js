@@ -3,7 +3,7 @@ import React from 'react'
 
 function TopBar() {
   return (
-    <div   className='flex flex-row justify-center text-4xl font-bold m-10 text-center'>
+    <div   className='bg-transparent  flex flex-row justify-center text-4xl font-bold m-5 text-center'>
         <Image src='/logo.jpg' className='rounded-full mr-2' alt='logo' width={100} height={100}/>
         <div className='grid place-content-center ml-2'>
 

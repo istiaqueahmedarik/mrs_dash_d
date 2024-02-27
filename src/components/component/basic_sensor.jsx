@@ -2,7 +2,7 @@
 import { LineChart } from '@mui/x-charts'
 import React, { useEffect } from 'react'
 import { io } from 'socket.io-client'
-const socket = io('http://192.168.1.130:3002')
+const socket = io('http://192.168.126.189:5002')
 function Basic() {
   const [Temperature, setTemperature] = React.useState([])
   const [Humidity, setHumidity] = React.useState([])
@@ -67,9 +67,10 @@ function Basic() {
   return (
     <div className="m-4">
       {/* basic sensor info - text */}
+      <h1 className='text-4xl text-center mt-2 mb-2'>Sensor Data</h1>
       <div className="border flex flex-row justify-between bg-white/10 backdrop-blur-md rounded-xl m-auto text-center p-4">
         <h1 className='text-5xl'>{Temperature[Temperature.length-1]}°C</h1>
-        <h1 className='text-5xl'>{ph[ph.length-1]} Ph</h1>
+        <h1 className='text-5xl'>{ph[ph.length-1]} PH</h1>
         <h1 className='text-5xl'>{Humidity[Humidity.length-1]} %</h1>
         <h1 className='text-5xl'>{NH[NH.length-1]} PPM</h1>
       </div>
