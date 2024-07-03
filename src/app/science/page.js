@@ -1,5 +1,5 @@
 import React from 'react'
-import Science from '../../components/component/Science'
+import Science from '../../components/component/science'
 
 function page() {
   return (

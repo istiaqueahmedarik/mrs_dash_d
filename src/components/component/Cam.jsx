@@ -8,7 +8,7 @@ import 'cropperjs/dist/cropper.css'
 import ExperimentChart from './ExperimentChart'
 import GridOption from './gridOption'
 import { io } from 'socket.io-client'
-const socket = io('http://192.168.1.126:3002')
+const socket = io('http://localhost:3002')
 function Cam({type,data,setData}) {
   const webcamRef = useRef(null)
   const [imgSrc, setImgSrc] = useState(null)
@@ -104,6 +104,9 @@ React.useEffect(()=>{
       if(message['camera']===type)
       setImgSrc('data:image/jpeg;base64,'+message['image'])
     })
+    return () => {
+      socket.off('image')
+    }
       
   },[])
 
@@ -148,7 +151,7 @@ React.useEffect(()=>{
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Crop the image
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Typography id="modal-modal-description" sx={{mt: 2,overflow:'scroll',height:'85vh' }}>
             {/* {imgSrc && <Image alt="pic" height={300} width={300} src={imgSrc} />} */}
 
             <div style={{ width: '100%' }}>
@@ -169,6 +172,7 @@ React.useEffect(()=>{
                 guides={true}
               />
             </div>
+            <button className="bg-blue-400 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2 ml-8 w-[80%]" onClick={handleButtonClick}>Save This Image</button>
             <div className='grid grid-cols-2 place-content-center m-auto'>
               <div className="box" style={{ width: '50%', float: 'right' }}>
                 <h1>Preview</h1>
@@ -205,7 +209,7 @@ React.useEffect(()=>{
               </div>
             </div>
             
-<button className="bg-blue-400 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2 w-full" onClick={handleButtonClick}>Save This Image</button>
+
           </Typography>
         </Box>
       </Modal>

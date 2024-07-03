@@ -8,8 +8,8 @@ import 'cropperjs/dist/cropper.css'
 import ExperimentChart from './ExperimentChart'
 import GridOption from './gridOption'
 import { io } from 'socket.io-client'
-const socket = io('http://192.168.43.17:3002')
-function AR({type}) {
+const socket = io('http://192.168.1.116:3002')
+function Rviz({type}) {
   const webcamRef = useRef(null)
   const [imgSrc, setImgSrc] = useState(null)
   
@@ -34,11 +34,7 @@ function AR({type}) {
     overflowY: 'scroll',
   }
   const [open, setOpen] = React.useState(false)
-  const handleOpen = () => {
-
-    setImage(imgSrc);
-    setOpen(true)
-  }
+  const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const capture = () => {
     const img = imgSrc
@@ -78,12 +74,9 @@ function AR({type}) {
 React.useEffect(()=>{
     socket.on('image', (message) => {
       // console.log(message)
-      
       setImgSrc('data:image/jpeg;base64,'+message['image'])
+      // if(message['camera']===type)
     })
-    return () => {
-      socket.off('image')
-    }
       
   },[])
 
@@ -91,21 +84,12 @@ React.useEffect(()=>{
     <div className="p-5 m-auto grid place-content-center">
     <div className="m-auto rounded-md p-5 mb-[2rem] bg-[#222222]">
       <div className="flex justify-between items-center mb-4 ml-2">
-        <p className="text-white ">Live Feed</p>
+        <p className="text-white ">Live Feed(ZED)</p>
         <div
           className={`h-3 w-3 rounded-full transition-all ${isLive ? 'bg-red-500' : 'bg-gray-500'}`}
         />
       </div>
-      {imgSrc!==null?<Image onClick={handleOpen} src={imgSrc} alt={"image"}  className='rounded-lg w-full h-full' width={200} height={200}/>:null}
-      {imgSrc!==null? <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        className='overflow-y-scroll'>
-            <Box sx={style}>
-                <Image src={image} alt={"image"}  className='rounded-lg w-full h-full' width={200} height={200}/>
-            </Box>
-
-        </Modal>:null}
-     
+      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-full h-full' width={200} height={200}/>:null}
         
       </div>
      
@@ -114,4 +98,4 @@ React.useEffect(()=>{
   )
 }
 
-export default AR
+export default Rviz

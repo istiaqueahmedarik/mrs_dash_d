@@ -148,6 +148,10 @@ h1 {
   color: white !important;
 }
 
+a[title="Open this area in Google Maps (opens a new window)"] {
+  position: fixed;
+}
+
 .box {
   display: inline-block;
   padding: 10px;
@@ -161,4 +165,42 @@ h1 {
 .leaflet-container.leaflet-touch.leaflet-retina.leaflet-fade-anim.leaflet-grab.leaflet-touch-drag.leaflet-touch-zoom {
   height: 50vh;
   width: 50vw;
+}
+
+.leaflet-container {
+  border-radius: 11px;
+}
+
+.rotate-text {
+  transform: rotate(-90deg);
+  position: absolute;
+  left: -50px;
+  top: 200px;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f3f3f3;
+}
+
+.loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top-color: #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

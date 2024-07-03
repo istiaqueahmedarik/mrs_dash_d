@@ -13,7 +13,7 @@ function Science() {
     <div className='flex flex-col scrollbar'>
       <h1 className='text-4xl font-extrabold text-center'>Science Dashboard</h1>
       <div className='w-full h-[35vh] mb-4'>
-      <Canvas 
+      {/* <Canvas 
   className='h-20 w-20 bg-[#0D0D0D]'
   camera={{ position: [0, 0, 5], fov: 60 }}
 >
@@ -24,7 +24,7 @@ function Science() {
   <pointLight position={[10, -10, 10]} />
   <pointLight position={[-10, 10, -10]} />
   <MeshComponent fileUrl={'/threed.gltf'} />
-</Canvas>
+</Canvas> */}
       </div>
       
 <div className='grid grid-cols-3 gap-3 place-content-center w-full justify-around'>
@@ -33,14 +33,14 @@ function Science() {
         <h1 className='text-[2rem] mb-3 text-center'>Sensor Data</h1>
         <FilePieChartIcon className='m-auto w-[6em] h-[6em]'/>
       </Link>
-      <Link href='/science/life' className='border bg-white/10 backdrop-blur-md border-white w-fit p-[4rem] rounded-xl grid place-content-center m-auto hover:bg-white transition-all hover:text-black'>
+      {/* <Link href='/science/life' className='border bg-white/10 backdrop-blur-md border-white w-fit p-[4rem] rounded-xl grid place-content-center m-auto hover:bg-white transition-all hover:text-black'>
         <h1 className='text-[2rem] mb-3 text-center'>Life Detection</h1>
         <HeartHandshakeIcon className='m-auto w-[6em] h-[6em]'/>
       </Link>
       <Link href='/science/rock' className='border bg-white/10 backdrop-blur-md border-white w-fit p-[4rem] rounded-xl grid place-content-center m-auto hover:bg-white transition-all hover:text-black'>
         <h1 className='text-[2rem] mb-3 text-center'>Rock Detection</h1>
         <MicroscopeIcon className='m-auto w-[6em] h-[6em]'/>
-      </Link>
+      </Link> */}
       {/* <Link href='/' className='border bg-white/10 backdrop-blur-md border-white w-fit p-[4rem] rounded-xl grid place-content-center m-auto hover:bg-white transition-all hover:text-black'>
         <h1 className='text-2xl mb-3'>Basic</h1>
         <FilePieChartIcon className='m-auto w-[3em] h-[3em]'/>

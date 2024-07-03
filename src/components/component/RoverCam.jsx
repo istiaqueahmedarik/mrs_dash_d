@@ -8,7 +8,7 @@ import 'cropperjs/dist/cropper.css'
 import ExperimentChart from './ExperimentChart'
 import GridOption from './gridOption'
 import { io } from 'socket.io-client'
-const socket = io('http://192.168.1.126:3002')
+const socket = io('http://127.0.0.1:3002')
 function RoverCam({type}) {
   const webcamRef = useRef(null)
   const [imgSrc, setImgSrc] = useState(null)
@@ -77,6 +77,9 @@ React.useEffect(()=>{
       if(message['camera']===type)
       setImgSrc('data:image/jpeg;base64,'+message['image'])
     })
+    return () => {
+      socket.off('image')
+    }
       
   },[])
 
@@ -84,7 +87,7 @@ React.useEffect(()=>{
     <div className="p-5 m-auto grid place-content-center">
     <div className="m-auto rounded-md p-5 mb-[2rem] bg-[#222222]">
       <div className="flex justify-between items-center mb-4 ml-2">
-        <p className="text-white ">Live Feed</p>
+        <p className="text-white ">Live Feed(On Board)</p>
         <div
           className={`h-3 w-3 rounded-full transition-all ${isLive ? 'bg-red-500' : 'bg-gray-500'}`}
         />

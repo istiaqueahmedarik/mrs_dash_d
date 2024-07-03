@@ -8,40 +8,56 @@ import { cn } from "../../utils/cn"
 import { TracingBeam } from '../ui/tracing'
 import { PinContainer } from '../ui/tdpin'
 import { LampContainer } from '../ui/lamp'
+import { Box, Typography } from '@mui/material'
 function Electrical() {
     const [rock, setRock] = useState([])
-
+    const [v,setV] = useState(36.67);
+    setTimeout(()=>{
+      setV((v-0.3).toFixed(2));
+    },5000)
   return (
     <TracingBeam className="mb-5">
        <div className=''>
-        <h1 className='text-4xl text-center'>Electrical Team Dashboard</h1>
+        <h1 className='text-4xl text-center'>Electrical Dashboard</h1>
         <div>
         <Cam type={'rock'} data={rock} setData={setRock}/>
         </div>
         <div>
             <div className='pl-5 pr-5 flex flex-row m-auto w-full '>
             {/* Current Voltage Value */}
-            <div className='border border-white bg-[#141414] w-fit p-[5rem] rounded-xl hover:bg-[#232323] transition-all m-auto  relative items-center justify-center antialiased'>
+            <div className='border border-[#d4fbb7] bg-[#141414] w-fit p-[5rem] rounded-xl hover:bg-[#232323] transition-all m-auto  relative items-center justify-center antialiased'>
                 <p className='text-xl'>Current Voltage: </p>
-                <h1 className='text-7xl'>23V</h1>
+                <h1 className='text-7xl'>{v}V</h1>
         <BackgroundBeams className={"voltage"}/>
 
             </div>
             {/* Battery Charge Graph of allTime */}
-            <div className='flex flex-col'>
+            <div className='flex flex-col justify-center'>
+               <h1 className="text-center text-3xl">Battery Charge</h1>
+           
+               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Typography variant="body1" sx={{ transform: 'rotate(-90deg)' }}>
+      Charge(%)
+    </Typography>
             <LineChart 
          
          series={[
              {
-                 data: [100,98,97,95,94,92,90,88,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0],
+                 data: [100,98,97,95,94,92,90,88,85,80,75,70],
+                 
                  label: 'Charge(%)',
                  area: true,
                  curve: "monotoneX",
              }
              
             
-         ]}
-         width={900}
+         ]
+        
+        }
+        
+        
+         width={600}
          height={400}
          sx={{
              '& .MuiChartsAxis-tickLabel': {
@@ -56,7 +72,12 @@ function Electrical() {
              },
            }}
          />
-         <h1 className="text-center text-3xl">Battery Charge</h1>
+          </Box>
+  <Typography variant="body1">
+    Time
+  </Typography>
+</Box>
+        
             </div>
             
             </div>
@@ -65,19 +86,25 @@ function Electrical() {
                 <h1 className='text-center text-4xl'>
                     Cell Voltage
                 </h1>
-                <BarChart
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Typography variant="body1" sx={{ transform: 'rotate(-90deg)' }}>
+      Voltage(V)
+    </Typography>
+    <BarChart
   xAxis={[{ scaleType: 'band', data: ['Cell Voltages'] }]}
+  
   series={[
     
-    { data: [10], label: 'C1' },
-    { data: [8], label: 'C2' },
-    { data: [3], label: 'C3' },
-    { data: [5], label: 'C4' },
-    { data: [9], label: 'C5' },
-    { data: [7], label: 'C6' },
-    { data: [8], label: 'C7' },
-    { data: [5], label: 'C8' },
-    { data: [8], label: 'C9' },
+    { data: [3], label: 'C1' },
+    { data: [2.9], label: 'C2' },
+    { data: [2.75], label: 'C3' },
+    { data: [3.2], label: 'C4' },
+    { data: [3.12], label: 'C5' },
+    { data: [3.15], label: 'C6' },
+    { data: [3], label: 'C7' },
+    { data: [2.75], label: 'C8' },
+    { data: [2.5], label: 'C9' },
   ]}
 
   width={1024}
@@ -95,15 +122,25 @@ function Electrical() {
     },
   }}
 />
+          </Box>
+  
+</Box>
+               
             </div>
             <div className='pl-5 pr-5 flex flex-row m-auto w-full'>
                 {/* Temperature Graph of last 100*/}
                 <div className='flex flex-col'>
-            <LineChart 
+                  <h1 className="text-center text-3xl">Battery Temperature</h1>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Typography variant="body1" sx={{ transform: 'rotate(-90deg)' }}>
+      Temperature(°C)
+    </Typography>
+    <LineChart 
          
          series={[
              {
-                 data: [100,98,97,95,94,92,90,88,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0],
+                 data: [25,28,30,26,35,28,20,25],
                  label: 'Temperature(°C)',
                  area: true,
                  curve: "natural",
@@ -111,7 +148,7 @@ function Electrical() {
              
             
          ]}
-         width={800}
+         width={700}
          height={400}
          sx={{
              '& .MuiChartsAxis-tickLabel': {
@@ -126,7 +163,13 @@ function Electrical() {
              },
            }}
          />
-         <h1 className="text-center text-3xl">Battery Temperature</h1>
+          </Box>
+  <Typography variant="body1">
+    Time
+  </Typography>
+</Box>
+          
+         
             </div>
 
 

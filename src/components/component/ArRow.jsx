@@ -11,17 +11,18 @@ function ArRow({id,dist,newTable,setNewTable,lat,lng}) {
     
 
     useEffect(() => {
-
+        // newTable.sort((a, b) => a.id - b.id);
         
 
         if (dist < 200) {
             const timeout = setTimeout(() => {
-                setShowLoader(true);
+                const exist = newTable.find(row => row.id === id);
+                if (!exist) { setShowLoader(true)  }
                 intervalId.current = setInterval(() => {
                     if (dist > 200) {
                         clearInterval(intervalId.current);
                         setShowLoader(false);
-                        setCountdown(5);
+                        setCountdown(2);
                     } else {
                         setCountdown(prevCountdown => {
                             if (prevCountdown === 1) {
@@ -30,19 +31,20 @@ function ArRow({id,dist,newTable,setNewTable,lat,lng}) {
                                 setNewTable(prevTable => {
                                     const existingRow = prevTable.find(row => row.id === id);
                                     if (existingRow) {
+                                        setShowLoader(false);
                                         return prevTable;
                                     } else {
                                         return [...prevTable, {id, dist, lat,  lng, time: new Date().toLocaleTimeString()}];
                                     }
                                 });
-                                return 5;
+                                return 2;
                             } else {
                                 return prevCountdown - 1;
                             }
                         });
                     }
-                }, 1000);
-            }, 2000);
+                }, 500);
+            }, 1000);
             return () => {
                 clearTimeout(timeout);
                 if (intervalId.current) clearInterval(intervalId.current);
@@ -51,10 +53,14 @@ function ArRow({id,dist,newTable,setNewTable,lat,lng}) {
     }, [dist]);
 
     return (
-        showLoader ? <Loader countdown={countdown} /> :  <tr key={id}>
-        <td className="px-4 py-2">{id}</td>
-        <td className="px-4 py-2">{dist}</td>
-        </tr>
+        showLoader ? (
+            <Loader countdown={countdown} />
+        ) : (
+            <tr key={id}>
+                <td className="px-4 py-2">{id}</td>
+                <td className="px-4 py-2">{dist}</td>
+            </tr>
+        )
     )
 }
 

@@ -7,7 +7,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import RoverCam from './RoverCam'
 import AR from './ArCam'
 import Rviz from './Rviz' 
-import axios from 'axios';
+
 import Mp from './Map';
 import { Box, Modal } from '@mui/material';
 import { io } from 'socket.io-client';
@@ -57,11 +57,10 @@ function MeshComponent({ fileUrl,position }) {
 }
 const socket = io('http://127.0.0.1:3002')
 const socket1 = io('http://192.168.43.17:3002');
-const rosSocket = io('http://localhost:8000');
+
 function Autonomus() {
   const [newTable, setNewTable] = useState([]);
   const [motion, setMotion] = useState({ speed: 0, direction: 0, acceleration: 0 });
-  
   const controlsRef = useRef();
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -76,33 +75,12 @@ function Autonomus() {
   const [curMsg, setCurMsg] = useState({
     
   });
-  const handleSubmit = async(e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const exists = coordinates.some(coord => coord.lat === latitude && coord.lng === longitude);
           if (!exists) {
             setCoordinates(old => [...old, { lat: latitude, lng: longitude }]);
           }
-
-    // curl -X POST -H "Content-Type: application/json" -d '{"latitude": 47.397742, "longitude": 8.545594, "altitude": 10}' http://localhost:8000/waypoints
-    
-    const options = {
-      url: 'http://localhost:8000/waypoints',
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: {
-        latitude: latitude,
-        longitude: longitude,
-        altitude: 0
-      }
-    };
-    
-    axios(options)
-      .then(response => {
-        console.log(response.status);
-      });
    
     setLatitude('');
     setLongitude('');
@@ -162,12 +140,7 @@ function Autonomus() {
     //   setCoordinates((old) => old.length === 0 ? [{lat: message.lat, lng: message.lng}] : old);
     //   setCoordinates((old) => {old[0] = {lat: message.lat, lng: message.lng}; return old;});
     // });
-    rosSocket.on('global_position',(message)=>{
-      console.log(message.data.latitude);
-    })
-    rosSocket.on('waypoint_message',(message)=>{
-      console.log("waypoints:",message);
-    })
+    
     
     
 
@@ -305,12 +278,12 @@ function Autonomus() {
         </div>
       </div>
 
-      <div className="mt-20">
+      {/* <div className="mt-20">
         <h1 className="text-3xl text-center">RVIZ Feedback</h1>
         <div className="flex justify-between mt-8">
            <Rviz type="rviz" />
         </div>
-      </div>
+      </div> */}
 
 
         <div className='mb-6 '>

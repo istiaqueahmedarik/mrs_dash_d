@@ -30,6 +30,10 @@ function ExperimentChart(props) {
 
   
     useEffect(() => {
+      const interval = setInterval(() => {
+        setNh3(Math.floor(Math.random() * (13 - 5 + 1) + 5));
+        console.log(Nh3)
+      }, 2000);
         socket.on('Ammonia', (message) => {
             setNh3(message)
             console.log(message)
@@ -47,6 +51,7 @@ function ExperimentChart(props) {
             setData3(props.iodin[0])
         }
         else setData3(-1)
+        return () => clearInterval(interval);
     }, [props])
     const handleSelectChange = (val) => {
         setSelectedOption(val)

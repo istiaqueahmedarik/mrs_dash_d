@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRef } from "react";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useLoader, useThree } from "react-three-fiber";
 import { Mesh } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 function MeshComponent({ fileUrl }) {

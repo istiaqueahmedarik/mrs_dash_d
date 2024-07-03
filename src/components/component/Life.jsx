@@ -8,7 +8,7 @@ import 'cropperjs/dist/cropper.css'
 import ExperimentChart from './ExperimentChart'
 import GridOption from './gridOption'
 import { io } from 'socket.io-client'
-const socket = io('http://192.168.126.248:3002')
+const socket = io('http://localhost:3002')
 
 function Life() {
   const webcamRef = useRef(null)
@@ -139,6 +139,9 @@ const handleButtonClick = () => {
       if(message['camera']==='microscope'){
           setImgSrc('data:image/jpeg;base64,'+message['image'])}
     })
+    return () => {
+      socket.off('image');
+    }
       
   },[])
 
@@ -180,7 +183,7 @@ const handleButtonClick = () => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Crop the image
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Typography id="modal-modal-description" sx={{ mt: 2,overflow:'scroll',height:'85vh' }}>
             {/* {imgSrc && <Image alt="pic" height={300} width={300} src={imgSrc} />} */}
 
             <div style={{ width: '100%' }}>
@@ -202,6 +205,25 @@ const handleButtonClick = () => {
                 guides={true}
               />
             </div>
+            <div className="w-64 m-auto mt-2 mb-2">
+  <label className="block uppercase tracking-wide text-white text-xs font-bold mb-2" htmlFor="grid-state">
+    Choose An Experiment Type
+  </label>
+  <div className="relative">
+    <select 
+      className="block appearance-none w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+      id="grid-state"
+      value={selectedOption}
+      onChange={handleSelectChange}
+    >
+      <option>Choose An Experiment</option>
+      <option>Protein</option>
+      <option>Benedict</option>
+      <option>Iodin</option>
+    </select>
+  </div>
+  <button className="mt-4 w-full bg-blue-400 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all " hidden={selectedOption==='0'} onClick={handleButtonClick}>Save it!</button>
+</div>
             <div className='grid grid-cols-2 place-content-center m-auto'>
               <div className="box" style={{ width: '50%', float: 'right' }}>
                 <h1>Preview</h1>
@@ -237,25 +259,7 @@ const handleButtonClick = () => {
                 )}
               </div>
             </div>
-            <div className="w-64 m-auto mt-20 mb-20">
-  <label className="block uppercase tracking-wide text-white text-xs font-bold mb-2" htmlFor="grid-state">
-    Choose An Experiment Type
-  </label>
-  <div className="relative">
-    <select 
-      className="block appearance-none w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-      id="grid-state"
-      value={selectedOption}
-      onChange={handleSelectChange}
-    >
-      <option>Choose An Experiment</option>
-      <option>Protein</option>
-      <option>Benedict</option>
-      <option>Iodin</option>
-    </select>
-  </div>
-  <button className="mt-4 w-full bg-blue-400 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all " hidden={selectedOption==='0'} onClick={handleButtonClick}>Save it!</button>
-</div>
+           
 
           </Typography>
         </Box>
