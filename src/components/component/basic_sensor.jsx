@@ -45,10 +45,10 @@ const SensorChart = () => {
     });
 
     // // // Clean up the socket connection on component unmount
-    return () => {
-      console.log('Disconnecting socket')
-      socket.disconnect();
-    };
+    // return () => {
+    //   console.log('Disconnecting socket')
+    //   socket.disconnect();
+    // };
   }, []);
 
   const updateDataArray = (arr, newValue) => {
