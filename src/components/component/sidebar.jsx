@@ -46,7 +46,7 @@ function Sidebar() {
           </Tooltip>
         </TooltipProvider>
 
-        {/* <TooltipProvider>
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link href="/electrical" className={`hover:bg-[#6F5D81] hover:text-white p-2 hover:rounded-full m-6 ${pathName==='/electrical'?" text-white rounded-full bg-[#6F5D81]":""}`} >
@@ -65,7 +65,7 @@ function Sidebar() {
             </TooltipTrigger>
             <TooltipContent>Autonomus</TooltipContent>
           </Tooltip>
-        </TooltipProvider> */}
+        </TooltipProvider>
        
       </motion.div>
     </div>

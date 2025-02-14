@@ -70,16 +70,16 @@ function ImageList({protein,benedict,iodin, b,setB,setData,resetData,sample,setG
   
 
   return (
-    <div className='grid  w-full grid-rows-4 gap-3 m-2'>
-      <div className='grid grid-rows-2 w-full place-content-center m-auto bg-slate-900 p-5 pt-[5rem] pb-[5rem] rounded-xl'>
+    <div className='w-full flex flex-col gap-3 m-2'>
+      <div className='grid grid-rows-2 w-full place-content-center m-auto bg-slate-900 p-5  rounded-xl'>
 
 
           {/* {fn===-1?<h1 className='text-center text-4xl'> Ammonia Level: {Nh3}</h1>:null} */}
-          {fn===-1?<h1 className='text-center text-4xl'> Ammonia Level: 5</h1>:null}
+          {fn===-1?<h1 className='text-center text-2xl'> Ammonia Level: 5</h1>:null}
 
 
 
-          {fn===-1?<button className={`bg-green-600 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2 text-2xl`} onClick={(e)=>toggleFn(Nh3)}>Set This Data For This Sample</button>:<h1>Ammonia: {fn}</h1>}
+          {fn===-1?<button className={`bg-green-600 pt-2 pb-2 pl-3 pr-3 rounded-full hover:bg-white hover:text-black transition-all m-2 text-xl`} onClick={(e)=>toggleFn(Nh3)}>Set This Data For This Sample</button>:<h1>Ammonia: {fn}</h1>}
         </div>
         <div className='grid grid-cols-2 gap-2 w-full bg-[#222222] p-1 mb-2 rounded-xl'>
         {protein.length<=sample-1?<div className=' text-white text-center m-5'>No Data on Protein Yet</div>:<Image src={protein[sample-1]} alt={"image"}  className='rounded-lg w-full m-auto' width={400} height={400}/>}

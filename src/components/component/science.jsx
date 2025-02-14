@@ -10,7 +10,7 @@ import MeshComponent from './MeshComponent'
 function Science() {
   const controlsRef = useRef();
   return (
-    <div className='flex flex-col scrollbar'>
+    <div className='flex flex-col scrollbar text-white'>
       <h1 className='text-4xl font-extrabold text-center'>Science Dashboard</h1>
       <div className='w-full h-[35vh] mb-4'>
       {/* <Canvas 

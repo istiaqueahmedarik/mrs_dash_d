@@ -148,7 +148,7 @@ const handleButtonClick = () => {
   
 
   return (
-    <div className="p-5 m-auto grid place-content-center">
+    <div className="p-5 m-auto grid place-content-center text-white">
     <div className="m-auto rounded-md p-5 mb-[2rem] bg-[#222222]">
       <div className="flex justify-between items-center mb-4 ml-2">
         <p className="text-white ">Live Feed</p>

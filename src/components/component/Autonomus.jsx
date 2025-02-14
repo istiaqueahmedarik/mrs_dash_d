@@ -15,6 +15,8 @@ import { debounce, set } from 'lodash';
 import ArRow from './ArRow';
 import RoverCam1 from './RoverCam1';
 import RoverCam2 from './RoverCam2';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import Timer from './Timer'
 function MeshComponent({ fileUrl,position }) {
     const { camera } = useThree();
   useEffect(() => {
@@ -24,11 +26,6 @@ function MeshComponent({ fileUrl,position }) {
   const gltf = useLoader(GLTFLoader, fileUrl);
   const myRef = useRef(null);
   myRef.current = mesh;
-//   useFrame(() => {
-//     if (myRef.current) {
-//       myRef.current.rotation.y += 0.01;
-//     }
-//   }); 
   
   const [x, setX] = useState(10);
   const [y, setY] = useState(10);
@@ -83,8 +80,6 @@ function Autonomus() {
             setCoordinates(old => [...old, { lat: latitude, lng: longitude }]);
           }
 
-    // curl -X POST -H "Content-Type: application/json" -d '{"latitude": 47.397742, "longitude": 8.545594, "altitude": 10}' http://localhost:8000/waypoints
-    
     const options = {
       url: 'http://localhost:8000/waypoints',
       method: 'POST',
@@ -157,11 +152,6 @@ function Autonomus() {
 
 
   useEffect(() => {
-    // socket.on('location', (message) => {
-    //   setCurrentLocation([message.lat, message.lng]);
-    //   setCoordinates((old) => old.length === 0 ? [{lat: message.lat, lng: message.lng}] : old);
-    //   setCoordinates((old) => {old[0] = {lat: message.lat, lng: message.lng}; return old;});
-    // });
     rosSocket.on('global_position',(message)=>{
       console.log(message.data.latitude);
     })
@@ -207,7 +197,6 @@ function Autonomus() {
     }, 500); 
   
     socket1.on('data', (message)=>{
-        //message is an object of id array and dist array, now sort this both array, where small id should be first and the distance of that index should also be first
         let id = message.id;
         let dist = message.dist;
         let n = id.length;
@@ -228,7 +217,6 @@ function Autonomus() {
     });
   
     return () => {
-      // socket1.off('data', debouncedHandleData);
       socket1.off('data');
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
@@ -249,218 +237,256 @@ function Autonomus() {
     p: 4,
     overflowY: 'scroll',
   }
+
   return (
-    <div className='flex flex-col justify-between'>
-        <div className='topMain grid grid-cols-3  place-content-center ml-auto w-full '>
-                <div className='m-auto bg-[#151d2e] p-4 rounded-xl'>
-                  <h1 className='text-2xl text-center'>Rover</h1>
-                <div className='roverLiveDetails  m-auto p-14 rounded-3xl w-full bg-gray-900 text-white mt-5'>
+    <div className='text-white'>
+      <Timer/>
+      <Tabs defaultValue="rover">
+        <TabsList className='m-auto w-full bg-transparent py-5'>
+          <TabsTrigger value="rover">Rover</TabsTrigger>
+          <TabsTrigger value="gnss">GNSS Marker</TabsTrigger>
+          <TabsTrigger value="ar">AR Analysis</TabsTrigger>
+          <TabsTrigger value="object">Object Analysis</TabsTrigger>
+          <TabsTrigger value="camera">Camera Feedback</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="rover" className='text-white'>
+          <div className='flex flex-col justify-between'>
+            <div className='topMain grid grid-cols-3 place-content-center ml-auto w-full'>
+              <div className='m-auto bg-[#151d2e] p-4 rounded-xl'>
+                <h1 className='text-2xl text-center'>Rover</h1>
+                <div className='roverLiveDetails m-auto p-14 rounded-3xl w-full bg-gray-900 text-white mt-5'>
                   <h1 className='text-xl'>Latitude: {(currentLocation[0])}</h1>
                   <h1 className='text-xl'>Longitude: {currentLocation[1]}</h1>
                   <h1 className='text-xl'>Speed: {motion.speed} ms<sup>-1</sup></h1>
                   <h1 className='text-xl'>Direction: {motion.direction} {calculateHeading(motion.direction)}</h1>
                   <h1 className='text-xl'>Acceleration: {motion.acceleration} ms<sup>-2</sup></h1>
                 </div>
-                </div>
-                <div className='m-auto w-full h-[35vh]'>
-                   <h1 className='text-center text-2xl'>Live Orientation 🔴</h1>
-                <Canvas className='h-auto w-full bg-[#b3b3b3] rounded-3xl'>
-        <OrbitControls ref={controlsRef} enableRotate={true}  />
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-      <pointLight position={[-10, -10, -10]} />
-      <pointLight position={[10, -10, 10]} />
-      <pointLight position={[-10, 10, -10]} />
-        <MeshComponent fileUrl={'/threed.gltf'}  />
-      </Canvas> 
-                </div>
-                <div className=' m-auto bg-[#151d2e] p-4 rounded-xl'>
-                  <h1 className='text-2xl text-center'>Drone </h1>
-                <div className='roverLiveDetails  m-auto p-14 rounded-3xl w-full bg-gray-900 text-white mt-5'>
-                  <h1 className='text-xl'>Latitude: {(currentLocation[0])}</h1>
-                  <h1 className='text-xl'>Longitude: {currentLocation[1]}</h1>
-                  <h1 className='text-xl'>Altitude: {"45"}</h1>
-                  <h1 className='text-xl'>Battery: {"80%"}</h1>
-                  
-                  <h1 className='text-xl'>Speed: {motion.speed} ms<sup>-1</sup></h1>
-                  <h1 className='text-xl'>Direction: {motion.direction} {calculateHeading(motion.direction)}</h1>
-                  <h1 className='text-xl'>Gps Status: {"RTK Fixed"}</h1>
-                </div>
-                 
-                </div>
-
-        </div> 
-      <div className="mt-20">
-        <h1 className="text-3xl text-center">Camera Feedback</h1>
-        <div className="flex justify-between mt-8">
-          <div className="w-1/3">
-            <RoverCam1 type="rock1" />
+              </div>
+              <div className="">
+                <RoverCam type="microscope" />
+              </div>
+              <div className='m-auto max-w-xl h-[35vh]'>
+                <h1 className='text-center text-2xl'>Live Orientation 🔴</h1>
+                <Canvas className='h-auto max-w-lg aspect-auto bg-[#b3b3b3] rounded-3xl'>
+                  <OrbitControls ref={controlsRef} enableRotate={true} />
+                  <ambientLight />
+                  <pointLight position={[10, 10, 10]} />
+                  <pointLight position={[-10, -10, -10]} />
+                  <pointLight position={[10, -10, 10]} />
+                  <pointLight position={[-10, 10, -10]} />
+                  <MeshComponent fileUrl={'/threed.gltf'} />
+                </Canvas>
+              </div>
+            </div>
           </div>
-          <div className="w-1/3">
-            <RoverCam type="microscope" />
+        </TabsContent>
+
+        <TabsContent value="gnss" className='text-white'>
+          <div className='mb-6'>
+            <h1 className='text-3xl text-center'>GNSS Marker</h1>
+            <div className='flex flex-row justify-around mt-5 mb-5'>
+              <div>
+                <button className='bg-[#222222] p-3 text-center rounded-3xl text-white m-auto w-full hover:bg-[#2d2d2d] transition-all' onClick={handleOpen}>
+                  Set GNSS Navigation Way Point
+                </button>
+                <div className='h-[20vh]'>
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2">Index</th>
+                        <th className="px-4 py-2">Latitude</th>
+                        <th className="px-4 py-2">Longitude</th>
+                        <th className="px-4 py-2">Distance(m)</th>
+                        <th className="px-4 py-2">Heading</th>
+                        <th className="px-4 py-2">Checked</th>
+                        <th className="px-4 py-2">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {coordinates.map((coord, index) => (
+                        index === 0 ? null : <tr key={index}>
+                          <td className="px-4 py-2">{index}</td>
+                          <td className="px-4 py-2">{coord.lat}</td>
+                          <td className="px-4 py-2">{coord.lng}</td>
+                          <td className="px-4 py-2">{calculateDistance(currentLocation[0], currentLocation[1], coord.lat, coord.lng).toFixed(2)}</td>
+                          <td className="px-4 py-2">{angle(currentLocation[0], currentLocation[1], coord.lat, coord.lng).toFixed(2)} {calculateHeading(currentLocation[0], currentLocation[1], coord.lat, coord.lng)}</td>
+                          <td className="px-4 py-2">
+                            <input type="checkbox" checked={calculateDistance(currentLocation[0], currentLocation[1], coord.lat, coord.lng) === 0 ? true : coord.checked} onChange={() => handleCheck(index)} />
+                          </td>
+                          <td className="px-4 py-2">
+                            <button className='bg-red-700 rounded-full p-1 pl-2 pr-2' onClick={() => handleDelete(index)}>Delete</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button className='bg-[#868ff6] p-3 text-center rounded-3xl text-white m-auto w-full hover:bg-[#2d2d2d] transition-all' onClick={handleOpen}>
+                  Start Navigation
+                </button>
+                <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description" className='overflow-y-scroll'>
+                  <Box sx={style}>
+                    <h1>Setup</h1>
+                    <form onSubmit={handleSubmit} className="flex flex-col items-center mt-5">
+                      <input
+                        className="text-black border border-gray-300 rounded-md py-2 px-4 mb-2 w-64"
+                        type="number"
+                        value={latitude}
+                        onChange={(e) => setLatitude(e.target.value)}
+                        placeholder="Latitude"
+                        required
+                      />
+                      <input
+                        className="text-black border border-gray-300 rounded-md py-2 px-4 mb-2 w-64"
+                        type="number"
+                        value={longitude}
+                        onChange={(e) => setLongitude(e.target.value)}
+                        placeholder="Longitude"
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      >
+                        Set GNSS Navigation Way Point
+                      </button>
+                    </form>
+                  </Box>
+                </Modal>
+              </div>
+              <div className='h-[60vh] w-[40rem] relative'>
+                {currentLocation.length === 0 ? null : <Mp coordinates={coordinates} />}
+              </div>
+            </div>
           </div>
-          <div className="w-1/3">
-            <RoverCam2 type="rock2" />
+        </TabsContent>
+
+        <TabsContent value="ar" className='text-white'>
+          <div className=' m-5'>
+            <h1 className='text-center text-white text-3xl'>Realtime AR Tags Analyze</h1>
+            <div className='grid grid-cols-1 w-full ml-auto mr-auto p-5 rounded-xl h-[30rem]'>
+              
+              <div className='w-full text-left ml-auto mr-auto'>
+                <table className="w-full text-center">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2">ID</th>
+                      <th className="px-4 py-2">Distance(cm)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentLocation.length > 0 && curMsg.id?.map((id, index) => {
+                      return (
+                        <ArRow newTable={newTable} setNewTable={setNewTable} key={index} id={id} dist={curMsg.dist[index]} lat={currentLocation[0]} lng={currentLocation[1]} />
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className='bg-gray-800 rounded-xl p-10'>
+              {newTable.length > 0 ? (
+                <div className="w-full">
+                  <h1 className="text-center text-white text-3xl mb-5">Successful AR Tags Traverse</h1>
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-white">ID</th>
+                        <th className="px-4 py-2 text-left text-white">Distance(cm)</th>
+                        <th className="px-4 py-2 text-left text-white">Latitude</th>
+                        <th className="px-4 py-2 text-left text-white">Longitude</th>
+                        <th className="px-4 py-2 text-left text-white">Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {newTable.map((row, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-white">{row.id}</td>
+                          <td className="px-4 py-2 text-white">{row.dist}</td>
+                          <td className="px-4 py-2 text-white">{row.lat}</td>
+                          <td className="px-4 py-2 text-white">{row.lng}</td>
+                          <td className="px-4 py-2 text-white">{row.time}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : null}
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
 
-      <div className="mt-20">
-        <h1 className="text-3xl text-center">RVIZ Feedback</h1>
-        <div className="flex justify-between mt-8">
-           <Rviz type="rviz" />
-        </div>
-      </div>
-
-
-        <div className='mb-6 '>
-        <h1 className='text-3xl text-center'>GNSS Marker</h1>
-        <div className='flex flex-row justify-around mt-5 mb-5'>
-          <div className=''>
-            <button className='bg-[#222222] p-3 text-center rounded-3xl text-white m-auto w-full hover:bg-[#2d2d2d] transition-all' onClick={handleOpen}>Set GNSS Navigation Way Point</button>
-            <div className='h-[20vh]'>
-          <table className="w-full">
-            <thead>
-              <tr>
-
-                <th className="px-4 py-2">Index</th>
-                <th className="px-4 py-2">Latitude</th>
-                <th className="px-4 py-2">Longitude</th>
-                <th className="px-4 py-2">Distance(m)</th>
-                <th className="px-4 py-2">Heading</th>
-                <th className="px-4 py-2">Checked</th>
-                <th className="px-4 py-2">Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {coordinates.map((coord, index) => (
-                index===0?null:<tr key={index}>
-                <td className="px-4 py-2">{index}</td>
-                <td className="px-4 py-2">{coord.lat}</td>
-                <td className="px-4 py-2">{coord.lng}</td>
-                <td className="px-4 py-2">{calculateDistance(currentLocation[0], currentLocation[1], coord.lat, coord.lng).toFixed(2)}</td>
-                <td className="px-4 py-2">{angle(currentLocation[0], currentLocation[1], coord.lat, coord.lng).toFixed(2)} {calculateHeading(currentLocation[0], currentLocation[1], coord.lat, coord.lng)}</td>
-                <td className="px-4 py-2">
-                  <input type="checkbox"  checked={calculateDistance(currentLocation[0], currentLocation[1], coord.lat, coord.lng) === 0 ? true : coord.checked}  onChange={() => handleCheck(index)} />
-                </td>
-                <td className="px-4 py-2">
-                  <button className='bg-red-700 rounded-full p-1 pl-2 pr-2' onClick={() => handleDelete(index)}>Delete</button>
-                </td>
-              </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <button className='bg-[#868ff6] p-3 text-center rounded-3xl text-white m-auto w-full hover:bg-[#2d2d2d] transition-all' onClick={handleOpen}>Start Navigation</button>
-        
-
-            <Modal open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        className='overflow-y-scroll'>
-        <Box  sx={style}>
-          <h1>Setup</h1>
-          <form onSubmit={handleSubmit} className="flex flex-col items-center mt-5">
-            <input
-              className="text-black border border-gray-300 rounded-md py-2 px-4 mb-2 w-64"
-              type="number"
-              value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
-              placeholder="Latitude"
-              required
-            />
-            <input
-              className="text-black border border-gray-300 rounded-md py-2 px-4 mb-2 w-64"
-              type="number"
-              value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
-              placeholder="Longitude"
-              required
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Set GNSS Navigation Way Point
-            </button>
-          </form>
-        </Box>
-      </Modal>
+        <TabsContent value="object" className='text-white'>
+          <div className='  m-5'>
+            <h1 className='text-center text-white text-3xl'>Realtime Object Analysis</h1>
+            <div className='grid grid-cols-1 w-full ml-auto mr-auto p-5 rounded-xl h-[30rem]'>
+              
+              <div className='w-full text-left ml-auto mr-auto'>
+                <table className="w-full m-auto text-center">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2">Object Name</th>
+                      <th className="px-4 py-2">Distance(cm)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentLocation.length > 0 && curMsg.id?.map((id, index) => {
+                      return (
+                        <ArRow newTable={newTable} setNewTable={setNewTable} key={index} id={id} dist={curMsg.dist[index]} lat={currentLocation[0]} lng={currentLocation[1]} />
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className='bg-gray-800 rounded-xl p-10'>
+              {newTable.length > 0 ? (
+                <div className="w-full">
+                  <h1 className="text-center text-white text-3xl mb-5">Successful Object Analysis Traverse</h1>
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-white">Object Name</th>
+                        <th className="px-4 py-2 text-left text-white">Distance(cm)</th>
+                        <th className="px-4 py-2 text-left text-white">Latitude</th>
+                        <th className="px-4 py-2 text-left text-white">Longitude</th>
+                        <th className="px-4 py-2 text-left text-white">Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {newTable.map((row, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-white">{row.id}</td>
+                          <td className="px-4 py-2 text-white">{row.dist}</td>
+                          <td className="px-4 py-2 text-white">{row.lat}</td>
+                          <td className="px-4 py-2 text-white">{row.lng}</td>
+                          <td className="px-4 py-2 text-white">{row.time}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : null}
+            </div>
           </div>
-          <div className='h-[60vh] w-[40rem] relative'>
-          {currentLocation.length===0?null:<Mp coordinates={coordinates}/>}
-        </div>
-        </div>
-       </div> 
+        </TabsContent>
 
-       <div className='mt-[12rem] bg-[#111010] m-5'>
-        <h1 className='text-center text-white text-3xl'>Realtime AR Tags Analyze</h1>
-       <div className=' grid grid-cols-2  w-full ml-auto mr-auto  p-5 rounded-xl h-[30rem]'>
-
-<div className="w-[40rem] h-[40rem]">
-<AR type={"microscope"}/>
-</div>
-<div className='w-full text-left ml-auto mr-auto'>
-<table className="w-full">
-  <thead>
-    <tr>
-      <th className="px-4 py-2 text-left">ID</th>
-      <th className="px-4 py-2 text-left">Distance(cm)</th>
-    </tr>
-  </thead>
-  <tbody>
-  {currentLocation.length>0?
-  curMsg.id?.map((id, index) => {
-    
-
-
-    return (
-      <ArRow newTable={newTable} setNewTable={setNewTable} key={index} id={id} dist={curMsg.dist[index]} lat={currentLocation[0]} lng={currentLocation[1]}/>
-    );
-  }):null}
-</tbody>
-</table>
-</div>
-
-</div>
-
-<div className='bg-gray-800 rounded-xl p-10'>
-  {newTable.length > 0 ? (
-    <div className="w-full">
-      <h1 className="text-center text-white text-3xl mb-5">Successful AR Tags Traverse</h1>
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 text-left text-white">ID</th>
-            <th className="px-4 py-2 text-left text-white">Distance(cm)</th>
-            <th className="px-4 py-2 text-left text-white">Latitude</th>
-            <th className="px-4 py-2 text-left text-white">Longitude</th>
-            <th className="px-4 py-2 text-left text-white">Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {newTable.map((row, index) => {
-            console.log(row)
-            return (
-              <tr key={index}>
-                <td className="px-4 py-2 text-white">{row.id}</td>
-                <td className="px-4 py-2 text-white">{row.dist}</td>
-                <td className="px-4 py-2 text-white">{row.lat}</td>
-                <td className="px-4 py-2 text-white">{row.lng}</td>
-                <td className="px-4 py-2 text-white">{row.time}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
-  ):null}
-</div>
-
-       </div>
-
-       
+        <TabsContent value="camera" className='text-white'>
+          <div className="mt-20">
+            <h1 className="text-3xl text-center">Camera Feedback</h1>
+            <div className="grid grid-cols-2 place-content-center w-full m-auto justify-center mt-8">
+              <div className="w-1/2 m-auto">
+                <RoverCam1 type="rock1" />
+              </div>
+              
+              <div className="w-1/2 m-auto">
+                <RoverCam2 type="rock2" />
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

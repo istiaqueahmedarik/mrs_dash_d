@@ -92,7 +92,7 @@ React.useEffect(()=>{
           className={`h-3 w-3 rounded-full transition-all ${isLive ? 'bg-red-500' : 'bg-gray-500'}`}
         />
       </div>
-      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-full h-full' width={200} height={200}/>:null}
+      {imgSrc!==null?<Image src={imgSrc} alt={"image"}  className='rounded-lg w-full h-full' width={400} height={400}/>:null}
         
       </div>
      

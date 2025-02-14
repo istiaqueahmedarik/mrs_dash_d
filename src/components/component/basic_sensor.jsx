@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+const socket = io('http://192.168.68.103:5000');
+
 const SensorChart = () => {
   const [data, setData] = useState({
     humidity: [],
@@ -16,7 +18,6 @@ const SensorChart = () => {
   const [labels, setLabels] = useState([]);
 
   useEffect(() => { 
-    const socket = io('http://192.168.68.103:5000');
 
     socket.on('connect', () => { 
       console.log('Connected to server');
