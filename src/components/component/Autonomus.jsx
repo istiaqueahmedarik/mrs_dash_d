@@ -17,6 +17,9 @@ import RoverCam1 from './RoverCam1';
 import RoverCam2 from './RoverCam2';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import Timer from './Timer'
+import GPSTracker from '../../../gps-tracker';
+import RemoteZedViewer from "@/components/component/Zed";
+
 function MeshComponent({ fileUrl,position }) {
     const { camera } = useThree();
   useEffect(() => {
@@ -264,7 +267,7 @@ function Autonomus() {
                 </div>
               </div>
               <div className="">
-                <RoverCam type="microscope" />
+                < RemoteZedViewer />
               </div>
               <div className='m-auto max-w-xl h-[35vh]'>
                 <h1 className='text-center text-2xl'>Live Orientation 🔴</h1>
@@ -285,7 +288,8 @@ function Autonomus() {
         <TabsContent value="gnss" className='text-white'>
           <div className='mb-6'>
             <h1 className='text-3xl text-center'>GNSS Marker</h1>
-            <div className='flex flex-row justify-around mt-5 mb-5'>
+            <GPSTracker lat1={Number(latitude)} lng1={Number(longitude)} />
+            {/* <div className='flex flex-row justify-around mt-5 mb-5'>
               <div>
                 <button className='bg-[#222222] p-3 text-center rounded-3xl text-white m-auto w-full hover:bg-[#2d2d2d] transition-all' onClick={handleOpen}>
                   Set GNSS Navigation Way Point
@@ -358,7 +362,7 @@ function Autonomus() {
               <div className='h-[60vh] w-[40rem] relative'>
                 {currentLocation.length === 0 ? null : <Mp coordinates={coordinates} />}
               </div>
-            </div>
+            </div> */}
           </div>
         </TabsContent>
 
