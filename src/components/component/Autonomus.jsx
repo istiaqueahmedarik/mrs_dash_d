@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import Timer from './Timer'
 import GPSTracker from '../../../gps-tracker';
 import RemoteZedViewer from "@/components/component/Zed";
+import ROSLIB from "roslib"
 
 function MeshComponent({ fileUrl,position }) {
     const { camera } = useThree();
@@ -61,7 +62,8 @@ const rosSocket = io('http://localhost:8000');
 function Autonomus() {
   const [newTable, setNewTable] = useState([]);
   const [motion, setMotion] = useState({ speed: 0, direction: 0, acceleration: 0 });
-  
+  const [aruco, setAruco] = useState([{}]);
+  const [arucoComplete, setArucoComplete] = useState([]);
   const controlsRef = useRef();
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -70,9 +72,9 @@ function Autonomus() {
   const handleClose = () => {
     setOpen(false);
   }
-  const [coordinates, setCoordinates] = useState([]);
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+  const [coordinates, setCoordinates] = useState([23.9,90.4]);
+  const [latitude, setLatitude] = useState('23.9');
+  const [longitude, setLongitude] = useState('90.4');
   const [curMsg, setCurMsg] = useState({
     
   });
@@ -228,6 +230,70 @@ function Autonomus() {
 
   }, []);
 
+  useEffect(() => {
+    // Initialize ROS connection
+    const ros = new ROSLIB.Ros({
+      url: 'ws://192.168.1.178:9090'
+    });
+
+    ros.on('connection', () => {
+      console.log('Connected to ROS bridge server.');
+    });
+
+    ros.on('error', (error) => {
+      console.error('Error connecting to ROS bridge server:', error);
+    });
+
+    ros.on('close', () => {
+      console.log('Connection to ROS bridge server closed.');
+    });
+
+    // Create topic listener
+    const arucoListener = new ROSLIB.Topic({
+      ros: ros,
+      name: '/id_dist_pub',
+      messageType: 'std_msgs/String'
+    });
+
+    // Subscribe to the topic
+    arucoListener.subscribe((message) => {
+      const [id, distance] = message.data.split(',').map(Number);
+      setAruco((old) => {
+        const index = old.findIndex((item) => item.id === id);
+        // If the item is already marked as completed, do not update its distance
+        if (index !== -1 && old[index].completed === 'yes') {
+          return old;
+        }
+        const newObj = { id, distance, completed: distance < 2 ? 'yes' : 'no' };
+        if (index === -1) {
+          return [...old, newObj];
+        }
+        return old.map((item) => (item.id === id ? newObj : item));
+      });
+
+      if (distance < 2) {
+        // success message that comes once
+        // window.alert(`ID: ${id} is complete`);
+        // Optionally update the arucoComplete state if needed
+        // setArucoComplete((old) => {
+        //   if (!old.includes(id)) {
+        //     return [...old, id];
+        //   }
+        //   return old;
+        // });
+      } else {
+        // Perform actions such as updating state or UI
+      }
+      console.log(distance);
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      arucoListener.unsubscribe();
+      ros.close();
+    };
+  }, []); 
+
   const style = {
     position: 'absolute',
     top: '50%',
@@ -255,17 +321,17 @@ function Autonomus() {
 
         <TabsContent value="rover" className='text-white'>
           <div className='flex flex-col justify-between'>
-            <div className='topMain grid grid-cols-3 place-content-center ml-auto w-full'>
-              <div className='m-auto bg-[#151d2e] p-4 rounded-xl'>
+            <div className='topMain grid grid-cols-2 place-content-center ml-auto w-full'>
+              {/* <div className='m-auto bg-[#151d2e] p-4 rounded-xl'>
                 <h1 className='text-2xl text-center'>Rover</h1>
                 <div className='roverLiveDetails m-auto p-14 rounded-3xl w-full bg-gray-900 text-white mt-5'>
-                  <h1 className='text-xl'>Latitude: {(currentLocation[0])}</h1>
-                  <h1 className='text-xl'>Longitude: {currentLocation[1]}</h1>
-                  <h1 className='text-xl'>Speed: {motion.speed} ms<sup>-1</sup></h1>
+                  <h1 className='text-xl'>Latitude: {(23.9)}</h1>
+                  <h1 className='text-xl'>Longitude: {90.4}</h1>
+                  <h1 className='text-xl'>Speed: {3} ms<sup>-1</sup></h1>
                   <h1 className='text-xl'>Direction: {motion.direction} {calculateHeading(motion.direction)}</h1>
                   <h1 className='text-xl'>Acceleration: {motion.acceleration} ms<sup>-2</sup></h1>
                 </div>
-              </div>
+              </div> */}
               <div className="">
                 < RemoteZedViewer />
               </div>
@@ -372,21 +438,35 @@ function Autonomus() {
             <div className='grid grid-cols-1 w-full ml-auto mr-auto p-5 rounded-xl h-[30rem]'>
               
               <div className='w-full text-left ml-auto mr-auto'>
+                <h1 className='text-center text-white text-2xl'>AR Tags</h1>  
                 <table className="w-full text-center">
                   <thead>
                     <tr>
                       <th className="px-4 py-2">ID</th>
                       <th className="px-4 py-2">Distance(cm)</th>
+                      <th className='px-4 py-2'>Completed?</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {currentLocation.length > 0 && curMsg.id?.map((id, index) => {
+                    {/* {currentLocation.length > 0 && curMsg.id?.map((id, index) => {
                       return (
                         <ArRow newTable={newTable} setNewTable={setNewTable} key={index} id={id} dist={curMsg.dist[index]} lat={currentLocation[0]} lng={currentLocation[1]} />
                       );
-                    })}
+                    })} */}
+                    {
+                      aruco.map((item, index) => (  
+                        <tr key={index}>
+                          <td className="px-4 py-2">{item.id}</td>
+                          <td className="px-4 py-2">{item.distance}</td>
+                          <td className="px-4 py-2">{item.completed}</td>
+
+                        </tr>
+                      ))
+                    }
                   </tbody>
                 </table>
+
+                
               </div>
             </div>
             <div className='bg-gray-800 rounded-xl p-10'>

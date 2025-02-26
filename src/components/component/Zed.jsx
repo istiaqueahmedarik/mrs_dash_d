@@ -9,7 +9,7 @@ const Zed = () => {
     useEffect(() => {
         // Connect to the rosbridge WebSocket server.
         const ros = new ROSLIB.Ros({
-            url: 'ws://192.168.0.101:9090'
+            url: 'ws://192.168.1.177:9090'
         });
 
         ros.on('connection', () => {
