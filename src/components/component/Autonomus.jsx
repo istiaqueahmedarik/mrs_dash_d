@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import Timer from './Timer'
 import GPSTracker from '../../../gps-tracker';
 import RemoteZedViewer from "@/components/component/Zed";
+import ARTracker from '../../../ar_tracker';
 
 function MeshComponent({ fileUrl,position }) {
     const { camera } = useThree();
@@ -240,7 +241,7 @@ function Autonomus() {
     p: 4,
     overflowY: 'scroll',
   }
-
+  
   return (
     <div className='text-white'>
       <Timer/>
@@ -248,8 +249,8 @@ function Autonomus() {
         <TabsList className='m-auto w-full bg-transparent py-5'>
           <TabsTrigger value="rover">Rover</TabsTrigger>
           <TabsTrigger value="gnss">GNSS Marker</TabsTrigger>
-          <TabsTrigger value="ar">AR Analysis</TabsTrigger>
-          <TabsTrigger value="object">Object Analysis</TabsTrigger>
+          <TabsTrigger value="ar">AR Search</TabsTrigger>
+          <TabsTrigger value="object">Object Search</TabsTrigger>
           <TabsTrigger value="camera">Camera Feedback</TabsTrigger>
         </TabsList>
 
@@ -267,7 +268,7 @@ function Autonomus() {
                 </div>
               </div>
               <div className="">
-                < RemoteZedViewer />
+                <RemoteZedViewer />
               </div>
               <div className='m-auto max-w-xl h-[35vh]'>
                 <h1 className='text-center text-2xl'>Live Orientation 🔴</h1>
@@ -368,7 +369,7 @@ function Autonomus() {
 
         <TabsContent value="ar" className='text-white'>
           <div className=' m-5'>
-            <h1 className='text-center text-white text-3xl'>Realtime AR Tags Analyze</h1>
+            {/* <h1 className='text-center text-white text-3xl'>Realtime AR Tags Analyze</h1>
             <div className='grid grid-cols-1 w-full ml-auto mr-auto p-5 rounded-xl h-[30rem]'>
               
               <div className='w-full text-left ml-auto mr-auto'>
@@ -417,7 +418,8 @@ function Autonomus() {
                   </table>
                 </div>
               ) : null}
-            </div>
+            </div> */}
+            <ARTracker/>
           </div>
         </TabsContent>
 

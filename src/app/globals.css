@@ -278,3 +278,14 @@ a[title="Open this area in Google Maps (opens a new window)"] {
     transform: rotate(360deg);
   }
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

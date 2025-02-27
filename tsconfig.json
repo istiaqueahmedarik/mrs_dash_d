@@ -34,7 +34,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/mrs-dash/update",
-    "src/components/component/Zed.jsx"
+    "src/components/component/Zed.jsx",
+    "gps-tracker.jsx"
   ],
   "exclude": [
     "node_modules"
