@@ -6,7 +6,7 @@ import { Mesh } from 'three'
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import RoverCam from './RoverCam'
 import AR from './ArCam'
-import Rviz from './Rviz' 
+import Rviz from './Rviz'
 import axios from 'axios';
 import Mp from './Map';
 import { Box, Modal } from '@mui/material';
@@ -19,40 +19,40 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import Timer from './Timer'
 import GPSTracker from '../../../gps-tracker';
 import RemoteZedViewer from "@/components/component/Zed";
-import ARTracker from '../../../ar_tracker';
+import ROSLIB from "roslib"
 
-function MeshComponent({ fileUrl,position }) {
-    const { camera } = useThree();
+function MeshComponent({ fileUrl, position }) {
+  const { camera } = useThree();
   useEffect(() => {
-    camera.position.z = 90; 
+    camera.position.z = 90;
   }, [camera]);
-  const mesh = useRef<Mesh>(null);
+  const mesh = useRef < Mesh > (null);
   const gltf = useLoader(GLTFLoader, fileUrl);
   const myRef = useRef(null);
   myRef.current = mesh;
-  
+
   const [x, setX] = useState(10);
   const [y, setY] = useState(10);
   const [z, setZ] = useState(10);
 
   useFrame(() => {
-    
+
     setX(x + Math.random() * 0.2 - 0.1);
     setY(y + Math.random() * 0.2 - 0.1);
     setZ(z + Math.random() * 0.2 - 0.1);
 
     if (myRef.current) {
       myRef.current.position.set(x, y, z);
-    
+
     }
-    
+
   });
 
-  
+
   return (
     <mesh ref={myRef}>
-      <primitive object={gltf.scene} position={[x,y,z]}  />
-      
+      <primitive object={gltf.scene} position={[x, y, z]} />
+
     </mesh>
   );
 }
@@ -62,7 +62,8 @@ const rosSocket = io('http://localhost:8000');
 function Autonomus() {
   const [newTable, setNewTable] = useState([]);
   const [motion, setMotion] = useState({ speed: 0, direction: 0, acceleration: 0 });
-  
+  const [aruco, setAruco] = useState([{}]);
+  const [arucoComplete, setArucoComplete] = useState([]);
   const controlsRef = useRef();
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -71,18 +72,18 @@ function Autonomus() {
   const handleClose = () => {
     setOpen(false);
   }
-  const [coordinates, setCoordinates] = useState([]);
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+  const [coordinates, setCoordinates] = useState([23.9, 90.4]);
+  const [latitude, setLatitude] = useState('23.9');
+  const [longitude, setLongitude] = useState('90.4');
   const [curMsg, setCurMsg] = useState({
-    
+
   });
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const exists = coordinates.some(coord => coord.lat === latitude && coord.lng === longitude);
-          if (!exists) {
-            setCoordinates(old => [...old, { lat: latitude, lng: longitude }]);
-          }
+    if (!exists) {
+      setCoordinates(old => [...old, { lat: latitude, lng: longitude }]);
+    }
 
     const options = {
       url: 'http://localhost:8000/waypoints',
@@ -97,12 +98,12 @@ function Autonomus() {
         altitude: 0
       }
     };
-    
+
     axios(options)
       .then(response => {
         console.log(response.status);
       });
-   
+
     setLatitude('');
     setLongitude('');
     handleClose();
@@ -110,18 +111,18 @@ function Autonomus() {
   const [currentLocation, setCurrentLocation] = useState([]);
   console.log(coordinates);
 
-  const calculateDistance = (lat1,lng1,lat2,lng2) => {
-    const R = 6371e3; 
-    const φ1 = lat1 * Math.PI/180; 
-    const φ2 = lat2 * Math.PI/180;
-    const Δφ = (lat2-lat1) * Math.PI/180;
-    const Δλ = (lng2-lng1) * Math.PI/180;
-  
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371e3;
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) *
+      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
     const d = R * c;
     return d;
   };
@@ -144,26 +145,26 @@ function Autonomus() {
       str = 'NW';
     }
     return str;
-}
+  }
 
   const handleCheck = (index) => {
     setCoordinates(coordinates.map((coord, i) => i === index ? { ...coord, checked: !coord.checked } : coord));
   };
-  
+
   const handleDelete = (index) => {
     setCoordinates(coordinates.filter((_, i) => i !== index));
   };
 
 
   useEffect(() => {
-    rosSocket.on('global_position',(message)=>{
+    rosSocket.on('global_position', (message) => {
       console.log(message.data.latitude);
     })
-    rosSocket.on('waypoint_message',(message)=>{
-      console.log("waypoints:",message);
+    rosSocket.on('waypoint_message', (message) => {
+      console.log("waypoints:", message);
     })
-    
-    
+
+
 
     let watchId = null;
 
@@ -178,9 +179,9 @@ function Autonomus() {
     if (navigator.geolocation) {
       watchId = navigator.geolocation.watchPosition((pos) => {
         setCurrentLocation([pos.coords.latitude.toFixed(6), pos.coords.longitude.toFixed(6)]);
-        setCoordinates((old) => old.length === 0 ? [{lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6)}] : old);
-        setCoordinates((old) => {old[0] = {lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6)}; return old;});
-        
+        setCoordinates((old) => old.length === 0 ? [{ lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6) }] : old);
+        setCoordinates((old) => { old[0] = { lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6) }; return old; });
+
         setMotion(generateRandomValues());
       }, (error) => {
         console.error("Error occurred: " + error.message);
@@ -193,33 +194,33 @@ function Autonomus() {
       console.log("Geolocation is not supported by this browser.");
     }
 
-    
+
 
     const debouncedHandleData = debounce((data) => {
       setCurMsg(data);
       console.log(data);
-    }, 500); 
-  
-    socket1.on('data', (message)=>{
-        let id = message.id;
-        let dist = message.dist;
-        let n = id.length;
-        for (let i = 0; i < n-1; i++) {
-          for (let j = 0; j < n-i-1; j++) {
-            if (id[j] > id[j+1]) {
-              let temp = id[j];
-              id[j] = id[j+1];
-              id[j+1] = temp;
-              temp = dist[j];
-              dist[j] = dist[j+1];
-              dist[j+1] = temp;
-            }
+    }, 500);
+
+    socket1.on('data', (message) => {
+      let id = message.id;
+      let dist = message.dist;
+      let n = id.length;
+      for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+          if (id[j] > id[j + 1]) {
+            let temp = id[j];
+            id[j] = id[j + 1];
+            id[j + 1] = temp;
+            temp = dist[j];
+            dist[j] = dist[j + 1];
+            dist[j + 1] = temp;
           }
         }
-        setCurMsg({id, dist});
-      
+      }
+      setCurMsg({ id, dist });
+
     });
-  
+
     return () => {
       socket1.off('data');
       if (watchId !== null) {
@@ -229,46 +230,110 @@ function Autonomus() {
 
   }, []);
 
+  useEffect(() => {
+    // Initialize ROS connection
+    const ros = new ROSLIB.Ros({
+      url: 'ws://192.168.1.178:9090'
+    });
+
+    ros.on('connection', () => {
+      console.log('Connected to ROS bridge server.');
+    });
+
+    ros.on('error', (error) => {
+      console.error('Error connecting to ROS bridge server:', error);
+    });
+
+    ros.on('close', () => {
+      console.log('Connection to ROS bridge server closed.');
+    });
+
+    // Create topic listener
+    const arucoListener = new ROSLIB.Topic({
+      ros: ros,
+      name: '/id_dist_pub',
+      messageType: 'std_msgs/String'
+    });
+
+    // Subscribe to the topic
+    arucoListener.subscribe((message) => {
+      const [id, distance] = message.data.split(',').map(Number);
+      setAruco((old) => {
+        const index = old.findIndex((item) => item.id === id);
+        // If the item is already marked as completed, do not update its distance
+        if (index !== -1 && old[index].completed === 'yes') {
+          return old;
+        }
+        const newObj = { id, distance, completed: distance < 2 ? 'yes' : 'no' };
+        if (index === -1) {
+          return [...old, newObj];
+        }
+        return old.map((item) => (item.id === id ? newObj : item));
+      });
+
+      if (distance < 2) {
+        // success message that comes once
+        // window.alert(`ID: ${id} is complete`);
+        // Optionally update the arucoComplete state if needed
+        // setArucoComplete((old) => {
+        //   if (!old.includes(id)) {
+        //     return [...old, id];
+        //   }
+        //   return old;
+        // });
+      } else {
+        // Perform actions such as updating state or UI
+      }
+      console.log(distance);
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      arucoListener.unsubscribe();
+      ros.close();
+    };
+  }, []);
+
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '70%' ,
+    width: '70%',
     bgcolor: 'black',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
     overflowY: 'scroll',
   }
-  
+
   return (
     <div className='text-white'>
-      <Timer/>
+      <Timer />
       <Tabs defaultValue="rover">
         <TabsList className='m-auto w-full bg-transparent py-5'>
           <TabsTrigger value="rover">Rover</TabsTrigger>
           <TabsTrigger value="gnss">GNSS Marker</TabsTrigger>
-          <TabsTrigger value="ar">AR Search</TabsTrigger>
-          <TabsTrigger value="object">Object Search</TabsTrigger>
+          <TabsTrigger value="ar">AR Analysis</TabsTrigger>
+          <TabsTrigger value="object">Object Analysis</TabsTrigger>
           <TabsTrigger value="camera">Camera Feedback</TabsTrigger>
         </TabsList>
 
         <TabsContent value="rover" className='text-white'>
           <div className='flex flex-col justify-between'>
-            <div className='topMain grid grid-cols-3 place-content-center ml-auto w-full'>
-              <div className='m-auto bg-[#151d2e] p-4 rounded-xl'>
+            <div className='topMain grid grid-cols-2 place-content-center ml-auto w-full'>
+              {/* <div className='m-auto bg-[#151d2e] p-4 rounded-xl'>
                 <h1 className='text-2xl text-center'>Rover</h1>
                 <div className='roverLiveDetails m-auto p-14 rounded-3xl w-full bg-gray-900 text-white mt-5'>
-                  <h1 className='text-xl'>Latitude: {(currentLocation[0])}</h1>
-                  <h1 className='text-xl'>Longitude: {currentLocation[1]}</h1>
-                  <h1 className='text-xl'>Speed: {motion.speed} ms<sup>-1</sup></h1>
+                  <h1 className='text-xl'>Latitude: {(23.9)}</h1>
+                  <h1 className='text-xl'>Longitude: {90.4}</h1>
+                  <h1 className='text-xl'>Speed: {3} ms<sup>-1</sup></h1>
                   <h1 className='text-xl'>Direction: {motion.direction} {calculateHeading(motion.direction)}</h1>
                   <h1 className='text-xl'>Acceleration: {motion.acceleration} ms<sup>-2</sup></h1>
                 </div>
-              </div>
+              </div> */}
               <div className="">
-                <RemoteZedViewer />
+                < RemoteZedViewer />
               </div>
               <div className='m-auto max-w-xl h-[35vh]'>
                 <h1 className='text-center text-2xl'>Live Orientation 🔴</h1>
@@ -369,25 +434,39 @@ function Autonomus() {
 
         <TabsContent value="ar" className='text-white'>
           <div className=' m-5'>
-            {/* <h1 className='text-center text-white text-3xl'>Realtime AR Tags Analyze</h1>
+            <h1 className='text-center text-white text-3xl'>Realtime AR Tags Analyze</h1>
             <div className='grid grid-cols-1 w-full ml-auto mr-auto p-5 rounded-xl h-[30rem]'>
-              
+
               <div className='w-full text-left ml-auto mr-auto'>
+                <h1 className='text-center text-white text-2xl'>AR Tags</h1>
                 <table className="w-full text-center">
                   <thead>
                     <tr>
                       <th className="px-4 py-2">ID</th>
                       <th className="px-4 py-2">Distance(cm)</th>
+                      <th className='px-4 py-2'>Completed?</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {currentLocation.length > 0 && curMsg.id?.map((id, index) => {
+                    {/* {currentLocation.length > 0 && curMsg.id?.map((id, index) => {
                       return (
                         <ArRow newTable={newTable} setNewTable={setNewTable} key={index} id={id} dist={curMsg.dist[index]} lat={currentLocation[0]} lng={currentLocation[1]} />
                       );
-                    })}
+                    })} */}
+                    {
+                      aruco.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2">{item.id}</td>
+                          <td className="px-4 py-2">{item.distance}</td>
+                          <td className="px-4 py-2">{item.completed}</td>
+
+                        </tr>
+                      ))
+                    }
                   </tbody>
                 </table>
+
+
               </div>
             </div>
             <div className='bg-gray-800 rounded-xl p-10'>
@@ -418,8 +497,7 @@ function Autonomus() {
                   </table>
                 </div>
               ) : null}
-            </div> */}
-            <ARTracker/>
+            </div>
           </div>
         </TabsContent>
 
@@ -427,7 +505,7 @@ function Autonomus() {
           <div className='  m-5'>
             <h1 className='text-center text-white text-3xl'>Realtime Object Analysis</h1>
             <div className='grid grid-cols-1 w-full ml-auto mr-auto p-5 rounded-xl h-[30rem]'>
-              
+
               <div className='w-full text-left ml-auto mr-auto'>
                 <table className="w-full m-auto text-center">
                   <thead>
@@ -485,7 +563,7 @@ function Autonomus() {
               <div className="w-1/2 m-auto">
                 <RoverCam1 type="rock1" />
               </div>
-              
+
               <div className="w-1/2 m-auto">
                 <RoverCam2 type="rock2" />
               </div>

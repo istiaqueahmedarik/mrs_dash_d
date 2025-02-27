@@ -239,7 +239,7 @@ function Rock() {
   }
   return (
     <div>
-      <h1 className='text-4xl pl-5 text-center mb-5'>
+      <h1 className='text-4xl pl-5 text-center mb-5 '>
         Rock Type Detection
       </h1>
         <div className='flex flex-row justify-center'>
@@ -254,14 +254,14 @@ function Rock() {
        </div>
         
     </div>
-    <div className='m-5'>
+    <div className='m-5 ml-[5rem]'>
     <h1 className='text-4xl pl-5 mb-2'>
         Microscope Image
     </h1>
     {microscope.length>0?<Image width={400} height={400} src={microscope[microscope.length-1]} alt='microscope' className='m-5'/>:<h1 className='m-5'>No Image</h1>}
     
     </div>
-    <div className='m-5'>
+    <div className='m-5 ml-[5rem]'>
     <h1 className='text-4xl pl-5'>
         Rock Type Detection
     </h1>
